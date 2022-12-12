@@ -1,0 +1,39 @@
+---
+title: "**Final Project: R Reference Guide**"
+author: "Catherine Shea"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 4
+    theme: yeti
+    code_download: true
+---
+# R Reference Guide {.tabset .tabset-pills}
+
+## Loading Data and Packages
+
+### library()'
+a
+
+### 'require()'
+a
+a
+
+### 'here()'
+
+### 'read.csv()'
+
+aaA
+
+## Data Structures
+
+## Subsetting
+
+## Numerical Data Exploration
+
+## Graphical Data Exploration
+
+## Distribution Functions
+

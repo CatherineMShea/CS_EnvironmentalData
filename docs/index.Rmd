@@ -1,0 +1,12 @@
+---
+title: "Catherine Shea Project Homepage"
+author: "Catherine Shea"
+date: "2022-12-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Welcome to Catherine Shea's class page.
