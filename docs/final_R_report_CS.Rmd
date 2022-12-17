@@ -1,0 +1,297 @@
+---
+title: "**Final Project: R Report - Data Analysis**"
+author: "Catherine Shea"
+date: "2022-12-16"
+output: 
+  html_document:
+    toc: false
+    toc_depth: 5
+    theme: yeti
+    code_download: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+## **Data Exploration**
+
+### Numerical Exploration
+```{r include = FALSE, results = 'hide'}
+
+require(here)
+require(palmerpenguins)
+delomys = data.frame(read.csv(here("environmental_data", "data", "delomys.csv")))
+head(delomys)
+```
+**Create a code chunk that includes the following:**
+
+* Use summary() on the body mass and body length data columns in the Delomys data set to display summary statistics.
+
+* Perform a test of normality on the body mass and length columns. You can use shapiro.test()
+
+Summary of Delomys Body Mass
+```{r}
+summary(delomys$body_mass)
+```
+Summary of Delomys Body Length
+```{r}
+summary(delomys$body_length)
+```
+
+Shapiro Test of Normality between Delomys Body Mass and Length
+```{r}
+shapiro.test(delomys$body_mass[delomys$body_length])
+```
+
+### Graphical Exploration
+```{r fig.width=10, tidy = TRUE}
+plot(bill_length_mm ~ body_mass_g, data = penguins)
+```
+
+**Using code chunks, create the following plots, which you’ll use to answer the report questions:**
+
+* A scatterplot of body mass and body length
+* A histogram of body mass
+* A histogram of body length
+* A conditional boxplot of body mass, conditioned on species (column binomial)
+* A conditional boxplot of body mass, conditioned on sex (column sex)
+* A conditional boxplot of body mass, conditioned on both species and sex
+
+You will need to experiment with different width, height, and/or aspect values for each of your figures.
+
+```{r fig.width = 9, aspect = 1, height = 9}
+plot(delomys$body_mass ~ delomys$body_length, main = "Scatterplot of Delomys Body Mass and Body Length", xlab = "Body Mass (g)", ylab = "Body Length")
+```
+
+
+```{r fig.width = 8, aspect = 13, height = 9}
+par(mfrow = c(1, 2))
+hist(delomys$body_mass, main = "Histogram of Delomys Body Mass", xlab = "Body Mass (g)")
+hist(delomys$body_length, main = "Histogram of Delomys Body Length", xlab = "Body Length")
+```
+
+```{r fig.width = 7, aspect = 2, height = 15}
+boxplot(delomys$body_mass ~ delomys$binomial, main = "Boxplot of Body Mass, Conditioned on Species", xlab = "Species", ylab = "Body Mass (g)")
+```
+```{r fig.width = 12, aspect = 6, height = 11}
+boxplot(delomys$body_mass ~ delomys$sex, na.rm = TRUE, main = "Boxplot of Body Mass, Conditioned on Sex", xlab = "Sex", ylab = "Body Mass (g)")
+```
+```{r fig.width = 15, aspect = 6, height = 11}
+boxplot(delomys$body_mass ~ delomys$sex:delomys$binomial, main = "Boxplot of Body Mass, Conditioned on Sex and Species", xlab = "Sex and Species", ylab = "Body Mass (g)")
+```
+
+### Data Exploration
+
+**Q1 (2 pts.): Qualitatively describe the relationship between body mass and length.**   
+
+> Does the relationship seem linear, curved, nonexistent?
+
+Delomys body mass and length seem to share a positive linear relationship, marked by the scatterplot indication of an increase in body length as body mass increases.
+
+**Q2 (2 pts.): Qualitatively describe the shapes of the histograms.**
+
+ 
+> Do the data appear normally-distributed? Explain why or why not.    
+>
+> Explain why we care (or not) whether the data are normally distributed.
+
+The body mass histogram appears to be very slightly skewed to the left, almost normally-distributed. The body length histogram is also slightly skewed left, with a large frequency in 100-125 range, and very few length values greater than 150.
+
+This information from the histograms indicate that:
+* In a range of body mass values ~0-120 grams, the majority of the delomys sample have a body mass between ~30-70 grams.
+* In a range of body length values between ~40-275 mm, the majority of the deolmys sample have a body mass between ~80-140 mm.
+
+**Q3 (2 pts.): Using both the histograms and normality tests, do you think the (unconditioned) body masses and body length are normally-distributed?**    
+
+>  
+> Make sure you contrast your visual assessment of normality to the results of the numerical normality tests.
+
+```{r}
+shapiro.test(delomys$body_mass)
+
+shapiro.test(delomys$body_length)
+```
+
+Through comparison of the numerical normality assessments, via shapiro test against the histogram visuals, I can conclude that the level of skew in both of the histograms' visuals are not significant enough to be considering not-normally distributed. This is bolstered by the results of the shapiro wilk tests, where body mass p-value = 4.33e-05, and body length p-value = 2.2e-16.
+
+**Q4 (2 pts.): Examine the three conditional boxplots.**
+
+> 
+> Describe any graphical evidence you see for body mass differences based on species and/or sex.
+
+In the conditional boxplot between body mass and species, delomys dorsalis has a noticably higher body mass than the delomys sublineatus species.
+
+In the conditional boxplot between body mass and sex, the body mass difference between males and females is close to the same, but with a slightly higher value in male delomys.
+
+In the conditional boxplot for body mass conditioned by both sex and species, the male delomys dorsalis has the highest body mass overall. The female delomys dorsalis has the second highest, being greater than both the male and female delomys sublineatus species. In both species, the male dorsalis body mass is slightly greater than the female body mass -- however, the delomys dorsalis overall has a greater body mass than sublineatus.  
+
+### Model Assumptions
+
+**Using a code chunk, fit 5 models using lm():**
+
+Model 1: simple linear regression body_length ~ body_mass
+Model 2: 1-way ANOVA body_mass ~ sex
+Model 3: 1-way ANOVA body_mass ~ binomial
+Model 4: 2-way additive ANOVA body_mass ~ sex + binomial
+Model 5: 2-way factorial ANOVA body_mass ~ sex * binomial
+
+```{r include = FALSE, results = 'hide'}
+fit_1 = lm(body_length ~ body_mass, data=delomys)
+fit_2 = lm(body_mass ~ sex, data=delomys)
+fit_3 = lm(body_mass ~ binomial, data=delomys)
+fit_4 = lm(body_mass ~ sex + binomial, data = delomys, family = binomial)
+fit_5 = lm(body_mass ~ sex * binomial, data = delomys, family = binomial)
+```
+
+```{r}
+fit_1
+```
+```{r}
+knitr::kable(anova(fit_2))
+```
+```{r}
+
+knitr::kable(anova(fit_3))
+```
+```{r}
+
+knitr::kable(anova(fit_4))
+```
+```{r}
+knitr::kable(anova(fit_5))
+```
+
+**Q5 (2 pts.): What do you conclude about residual normality based on the numerical and graphical diagnostics?**
+
+I would reject the normality criteria of all of the fits presented except for the interative model(fit 5), on the basis of their p-values all equaling less than 0.05--indicating significance and non-normality.The interactive p-value of fit 5 = 0.950442.
+
+> **Q6 (1 pt.): Are violations of the normality assumption equally severe for all the models?**
+
+No. Fit 3 has the most severe non-normality, while fit 5 can be considered normal.
+
+Fit 2 p-value: 0.001951 = fit_2 < 0.05         
+Fit 3 p-value: 2.2e-16 = fit_3 < fit_2 < 0.05       
+Fit 4 p-value: 0.0001144(sex), 2.2e-16(binomial) = fit_3 < fit_4 < fit_2 < 0.05       
+Fit 5 p-value: 0.000115(sex), 2.2e-16(binomial), 0.950442(sex*binomial) = fit_3 < fit_4 < fit_2 < 0.05 < fit_5.
+
+### Model Interpretation
+
+```{r}
+knitr::kable(coef(summary(fit_1)))
+```
+
+
+**Q7 (2 pts.): What is the magnitude of the mass/length relationship?**
+
+The magnitude of the mass/length relationship is 0.87550g.
+
+**Q8 (2 pts.): What is the expected body length of an animal that weighs 100g?**
+
+The expected body length of an animal that weighs 100g equals: 0.87550(100) + 76.12466 = 163.67466mm.
+
+**Q9 (2 pts.): What is the expected body length of an animal that weighs 0g?**
+
+The expected body length of an animal that weighs 0 grams is 76.12466mm.
+
+### Body Mass: Coefficient Tables
+
+**Q10 (1 pt.): What is the base level for sex?**
+
+The base level for sex is female.
+
+```{r}
+knitr::kable(coef(summary(fit_2)))     
+knitr::kable(coef(summary(fit_3)))     
+knitr::kable(coef(summary(fit_4)))     
+knitr::kable(coef(summary(fit_5)))
+```
+
+**Q11 (1 pt.): What is the base level for binomial?**
+
+The base level for binomial is Delomys Dorsalis.
+
+**Q12 (1 pt.): Which sex is heavier? How do you know?**
+
+The male sex is heavier because the table lists the 'sexmale' estimate is 2.7841, which means that for every gram of body mass from a female, there is 2.7841 from a male.
+
+> **Q13 (1 pt.): Which species is heavier? How do you know?**
+
+The delomys dorsalis species is heavier because the table list that 'binomialDelonmys sublineatus' estimate is -7.6831, which means that for every gram of body mass from dorsalis, there is -7.6831 the amount from sublineatus.
+
+
+### ANOVA Tables
+
+Fit 2
+
+```{r}
+knitr::kable(anova(fit_2))   
+     
+```
+
+Fit 3
+
+```{r}
+knitr::kable(anova(fit_3))       
+
+```
+
+Fit 4
+
+```{r}
+knitr::kable(anova(fit_4))     
+
+```
+
+Fit 5
+
+```{r}
+knitr::kable(anova(fit_5)) 
+```
+
+**Q14 (1 pt.): Are sex and species significant predictors for body mass?**
+
+Sex is a significant predictor for body mass throughout all of the fits except for the interactive fit (fit 5), indicated by each p-value (Pr(>F)) equaling less than 0.05 for each.
+Fit 2 = 0.0001951     
+Fit 3 = 0     
+Fit 4 = 0.0001144(sex) & 0(binomial)    
+
+**Q15 (1 pt.): Is there a significant interaction?**
+
+There is not a significant interaction between sex and species against body mass, as the interactive model (Fit_5) has a p-value (Pr(>F)) of 0.9504424.
+
+**Q16 (2 pts.): Examine the p-values for the main effects (sex and species) in all four of the ANOVA tables.** 
+
+> 
+> Does the significance level of either main effect change very much among the different models?
+
+The significance level does not significantly change between the 1-sided ANOVA p-values for sex (0.0001951) or for binomial (0) when shifted to two-way additive or interactive ANOVA models, fit 4(sex = 0.0001144,binomial = 0), fit 5(sex = 0.0001150, binomial = 0). The only major difference is within the sex:binomial relationship, where the p-value = 0.9504424.
+
+## Model Comparison: Body Mass
+
+### Model Comparison
+
+```{r}
+AIC(fit_2)
+```
+```{r}
+AIC(fit_3)
+```
+
+```{r}
+AIC(fit_4)
+```
+
+```{r}
+AIC(fit_5)
+```
+
+**Q17 (1 pt.): Which two models have the lowest AIC?**
+
+fit 4 and fit 3 are the lowest.
+
+
+**Q18 (4 pts.): Which of the two models with lowest AIC scores would you select?**
+
+I would select fit 4, as it has the lowest overall AIC value.
+
+> Explain your decision based on model fit and the complexity/understanding tradeoff.
