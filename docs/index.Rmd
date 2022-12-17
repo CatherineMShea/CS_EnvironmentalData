@@ -14,4 +14,4 @@ Welcome to Catherine Shea's class page.
 [Final Project: R Reference Guide](final_R_reference_CS.html)
 
 
-[Final Project: R Report](final_R_report.CS_Rmd)
+[Final Project: R Report](final_R_report_CS.html)
