@@ -3,37 +3,495 @@ title: "**Final Project: R Reference Guide**"
 author: "Catherine Shea"
 output: 
   html_document:
-    toc: true
-    toc_float: true
-    toc_collapsed: true
-    toc_depth: 4
+    toc: false
+    toc_depth: 5
     theme: yeti
     code_download: true
 ---
-# R Reference Guide {.tabset .tabset-pills}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Contents {.tabset .tabset-pills}
 
 ## Loading Data and Packages
 
-### library()'
-a
+### **library()**
+"library()" is a function used for loading data packages. It is regarded similarly as "require()" but functions differently when faced with referenced packages that have not yet been installed. "library()" will provide halt the code and produce an error if the data referenced is not yet installed.
 
-### 'require()'
-a
-a
+> library( [package name] )
 
-### 'here()'
+##### **Example**
+```{r tidy=TRUE}
 
-### 'read.csv()'
+library(palmerpenguins)
+```
+Additional arguments that can be applied to the "library" function are:      
+*library(package, help, pos = 2, lib.loc = NULL, character.only = FALSE, logical.return = FALSE, warn.conflicts, quietly = FALSE, verbose = getOption("verbose"), mask.ok, exclude, include.only,attach.required = missing(include.only))*
 
-aaA
+### **require()**
+"require()" is a function used for loading data packages. It is regarded similarly as "library()," but functions differently when faced with referenced packages that have not yet been installed. "require()" acts as: 'try to load library package', and will provide a warning rather than an error if the data is not yet installed. This allows for code to continue to run, even after there is an error.
+
+> require( [package name] )
+
+##### **Example**
+```{r tidy=TRUE}
+require(here)
+```
+Additional arguments that can be applied to the "require" function are:      
+*require(package, lib.loc = NULL, quietly = FALSE, warn.conflicts, character.only = FALSE, mask.ok, exclude, include.only, attach.required = missing(include.only))*
+
+### **here()**
+"here()" is a function imported from the "here" package that allows for RStudio to locate project files based off of one's current working directory. Prior to use of this function for the first time, import this package using:
+
+> install.packages("here")
+>
+> require(here)
+>
+> [variable] = read.csv(here("[folder containing csv]", "[csv file name].csv"))
+
+##### **Example**
+```{r tidy=TRUE} 
+ginkgo = data.frame(read.csv(here("environmental_data","data", "ginkgo_data_2022.csv")))
+```
+This example implements the "read.csv()" and "data.frame()" functions, in addition to "here()". Details regarding the extra functions can be found in *Loading Data and Packages* and *Data Structures.*
+
+### **read.csv()**
+
+"read.csv()" extracts data from a csv file, allowing RStudio to use and manipulate the dataset inside of the file. It is used in conjunction with the "here" package to import the data, and is formatted as such:
+
+> [variable] = read.csv(here("[folder containing csv]", "[csv file name].csv"))
+
+##### **Example**
+```{r tidy=TRUE} 
+ginkgo = data.frame(read.csv(here("environmental_data","data", "ginkgo_data_2022.csv")))
+```
+This example implements the "here()" and "data.frame()" functions, in addition to "read.csv()". Details regarding the extra functions can be found in *Loading Data and Packages* and *Data Structures.*
+
+Additional arguments that can be applied to the "read.csv" tool are:     
+*read.csv(file, header = TRUE, sep = ",", quote = " " ", decimal = ".", fill = TRUE, comment.char = " ", ...)*   
+      
+        
+<a href="#header">back to top</a>    
+:)
+
 
 ## Data Structures
 
+### **c()**
+The function c() combines or concatenates its arguments into a vector (a 1-dimensional data structure consisting of 1 or more elements).
+All of the elements must be of the same type---it is not possible to combine string characters and numeric values together.
+
+> c(a, b, c, x, ...)
+
+##### **Example**
+```{r tidy=TRUE}
+number_vec = c(1, 4, 8, 9, 13)
+character_vec = c("a", "fish", "data is cool")
+number_vec
+print(character_vec) 
+```
+
+### **length()**
+The function "length()" obtains the length of vector/list components, a.k.a, the number of features within a vector/list.
+
+> variable = length(x)
+
+##### **Example**
+```{r tidy=TRUE}
+gink_petiole_len = length(unique(ginkgo$petiole_length))
+
+gink_petiole_len
+```
+This example implements the "unique()" functions in addition to "length()," of which is useful in extracting non-repeating numeric or character values from a vector.
+
+### **matrix()**
+The 'matrix()" function produces a matrix from a set of data values, derived from individually-mentioned values, a list, or vector.
+
+> matrix([data], [number of rows], [number of columns], [organize by row - True/False]...)
+
+##### **Example**
+```{r tidy=TRUE}
+num_matrix = matrix(c(1,2,3,4, 5,6,7,8), nrow = 4, byrow = TRUE)
+
+num_matrix
+```
+Additional arguments that can be applied to the "matrix" function are:     
+*matrix(data = NA, nrow = 1, ncol = 1, byrow = FALSE, dimnames = NULL)*
+
+### **data.frame()**
+"data.frame()" creates a data frame, of which is a list of variables with unique row names that create 'classes'. Data frames behave similarly to lists and matrices, and are crucial to data manipulation and analysis in R.   
+
+> data.frame(...), where '...' is a variable, concatenation, or manually listed values.
+
+##### **Example**
+```{r tidy=TRUE}
+ginkgo = data.frame(read.csv(here("environmental_data","data", "ginkgo_data_2022.csv")))
+```
+This example implements the "here()" and "read.csv()" functions, in addition to "data.frame()". Details regarding the extra functions can be found in *Loading Data and Packages.*
+
+Additional arguments that can be applied to the "data.frame" function are:     
+*data.frame(..., row.names = NULL, check.rows = FALSE, check.names = TRUE, fix.empty.names = TRUE, stringsAsFactors = FALSE)*
+
+### **nrow()**
+"nrow()" retrieves the number of rows present within a specified dataset: ( vector, list, data frame... )
+
+> num_rows = nrow(x)
+
+##### **Example**
+```{r tidy=TRUE}
+nrow(ginkgo)
+```
+
+### **ncol()**
+"ncol()" retrieves the number of columns present within a specified dataset: ( vector, list, data frame... )
+
+> num_column = ncol(x)
+
+##### **Example**
+```{r tidy=TRUE}
+ncol(ginkgo)
+```
+
+### **dim()**
+"dim()" retrieves the dimensions of a specified dataset:( vector, list, data frame... )
+
+> dim(x)
+
+##### **Example**
+```{r tidy=TRUE}
+dim(ginkgo)
+```
+
+
+   
+<a href="#header">back to top</a>    
+:)
+
+
 ## Subsetting
+
+### **$**
+
+The dollar sign acts as a subset to a database in order to refer to a specific column when performing analyses. It is formatted as so that the parent dataset name is written, then the dollar sign, and then the specified column is written. This format relies on attribute-based extraction of information.
+
+> dat_attribute = [dataset]$[attribute]
+
+##### **Example**
+```{r tidy=TRUE}
+ginkgo$petiole_length
+```
+
+### **[ ]**
+The square brackets "[ ]" act as a subset to a database based on position within a data frame. It is formatted as so that the parent dataset name is written, and then the brackets with i, j coordinates are attached.
+
+> x[i, j]
+
+##### **Example**
+```{r tidy=TRUE}
+ginkgo[1,]
+ginkgo[2,3]
+ginkgo[,3] #select the third column
+```
+
+### **subset()**
+"subset()" creates a subset of a dataset through use of a conditional. While the '$' is based on column names and the '[ ]' is based on extracting data positions, this function allows one to extract information based on whether specific parameters are met.
+
+> subset(x, ...)
+
+##### **Example** 
+```{r tidy=TRUE}
+dat_ade = droplevels(subset(penguins, species == "Adelie", na.rm = TRUE))
+dat_ade
+```
+
+
+
+   
+<a href="#header">back to top</a>     
+
 
 ## Numerical Data Exploration
 
+### **summary()**
+The "summary()" function produces summary results for a dataset. It provides information on mean, median, 1st quarter, 3rd quarter, minimum, and maximum values.
+
+> summary(object, ...)
+
+##### **Example** 
+```{r tidy=TRUE}
+summary(ginkgo$notch_depth)
+```
+
+### **mean()**
+"mean()" calculates the average value for an inserted dataset, list, or vector.
+
+> mean(x, ...)
+
+##### **Example** 
+```{r tidy=TRUE}
+mean(ginkgo$max_width)
+```
+additional arguments
+
+### **sd()**
+"sd()" calculates the standard deviation (variance) of the specified dataset, vector, or list.
+
+> sd(x, na.rm = FALSE) 
+> #na.rm indicates whether missing values should be removed.
+
+##### **Example** 
+```{r tidy=TRUE}
+sd(ginkgo$max_depth)
+```
+
+
+
+
+   
+<a href="#header">back to top</a>
+:)
+
 ## Graphical Data Exploration
 
+### **plot()** {.tabset .tabset-fade}
+The "plot()" function creates a scatter plot based off of input 'x' and 'y' values.
+
+> plot(x ~ y, ...)
+
+
+##### **Example** 
+```{r tidy=TRUE}
+plot(ginkgo$max_depth ~ ginkgo$max_width)
+```
+     
+Additionally, the visual format of a plot can be set through setting a "type =". Type p, (Points) is the default setting.
+
+The type options are:     
+![plot types l, s, p](https://r-coder.com/wp-content/uploads/2020/06/plot-type.png) 
+![plot types o, b, h](https://r-coder.com/wp-content/uploads/2020/06/plot-type-2.png)
+There are additional parameters that can be added to the function in order to alter visual formatting of the plot, including: *'col', 'pch', 'main', 'sub', 'type', 'cex', 'xlab', 'ylab', 'xlim', ylim'....*       
+Details on inclusion of these parameters are presented in the tabs below.
+
+#### **col =**
+"col =" refers to designation of the data point border-color within the plot. 
+
+> The colors can be assigned through:     
+> - common color terminology -> *col = "red"*     
+> - number values 1-8 -> *col = 3*      
+> - hexadecimal values -> *col = #000FF*     
+> - RGB value format -- through use of the "rgb()" function -> *col = rgb(0,1,1)*     
+
+##### **Example** 
+```{r tidy=TRUE}
+plot(ginkgo$max_depth ~ ginkgo$max_width, col = "blue")
+```
+
+#### **pch =**
+"pch =" is a parameter option in the plot function that allows one to change the shape of the data points. Designation of the pch value is set through assigning a value 1-25, of which correspond to the features below:
+![pch values 1 through 25](https://r-coder.com/wp-content/uploads/2020/06/plot-pch.png)
+
+> plot(x, y, pch = [1 through 25])
+
+##### **Example** 
+```{r tidy=TRUE}
+plot(ginkgo$max_depth ~ ginkgo$max_width, col = "blue", pch = 23)
+```
+
+#### **cex =**
+"cex =" determines the size of the data points in the plot. 
+
+> plot(x, y, cex = 0.5)
+> plot(x, y, cex = 2)
+
+##### **Example** 
+```{r tidy=TRUE}
+plot(ginkgo$max_depth ~ ginkgo$max_width, col = "blue", pch = 23, cex = 1.3)
+```
+     
+cex can also be applied to the label-editors: main, sub, lab, and axis (Formatted as: cex.main = ).
+
+#### **main =**
+"main =" assigns a primary title to a plot. The title must be surrounded by quotations for appropriate use of the parameter.
+
+> plot(x, y, main = "[text]")
+
+##### **Example** 
+```{r tidy=TRUE}
+plot(ginkgo$max_depth ~ ginkgo$max_width, main = "Relationship between Ginkgo-leaf Max Width and max depth", col = "blue", pch = 23, cex = 1.3)
+```
+     
+A secondary sub-title can be assigned to the plot, using sub = " ".
+
+#### **xlab =**
+"xlab =" allows for editing of the X axis title. The appended title must be held in quotations.
+
+> plot(x, y, xlab = "[text]")
+
+##### **Example** 
+```{r tidy=TRUE}
+plot(ginkgo$max_depth ~ ginkgo$max_width, main = "Relationship between Gingko-leaf Max Width and max depth", xlab = "Ginkgo Leaf Max Width", col = "blue", pch = 23, cex = 1.3)
+```
+
+#### **ylab =**
+"ylab =" allows for editing of the y axis title. The appended title must be held in quotations.
+
+> plot(x, y, ylab = "[text]")
+
+##### **Example** 
+```{r tidy=TRUE}
+plot(ginkgo$max_depth ~ ginkgo$max_width, main = "Relationship between Gingko-leaf Max Width and max depth", xlab = "Ginkgo Leaf Max Width", ylab = "Ginkgo Leaf Max Depth", col = "blue", pch = 23, cex = 1.3)
+```
+
+#### **xlim =**
+"xlim =" creates alterations to plot's x-axis dimensions, applying the c() function to provide the x-axis minimum and maximum values.
+
+> plot(x, y, xlim = c([min],[max]))
+
+##### **Example**
+```{r tidy=TRUE}
+plot(ginkgo$max_depth ~ ginkgo$max_width, main = "Relationship between Gingko-leaf Max Width and max depth", xlab = "Ginkgo Leaf Max Width", ylab = "Ginkgo Leaf Max Depth", xlim = c(10,175), col = "blue", pch = 23, cex = 1.3)
+```
+
+#### **ylim =**
+"ylim =" creates alterations to plot's y-axis dimensions, applying the c() function to provide the y-axis minimum and maximum values.
+
+> plot(x, y, ylim = c([min],[max]))
+
+##### **Example**
+```{r tidy=TRUE}
+plot(ginkgo$max_depth ~ ginkgo$max_width, main = "Relationship between Gingko-leaf Max Width and max depth", xlab = "Ginkgo Leaf Max Width", ylab = "Ginkgo Leaf Max Depth", xlim = c(10,175), ylim = c(0, 125), col = "blue", pch = 23, cex = 1.3)
+
+```
+
+
+### **hist()**
+The "hist()" function creates a histogram of data specified - vectors, lists, data frames, etc...
+
+> hist(x, ...)
+
+##### **Example**
+```{r tidy=TRUE}
+hist(penguins$flipper_length_mm)
+```
+
+##### **breaks =**
+"breaks =" is a parameter of the "hist()" function, which visually alters the distribution of histogram bars on the basis of how many bars will be displayed in the chart.
+
+> hist(x, breaks = [number of bars])
+
+##### **Example**
+```{r tidy=TRUE}
+hist(penguins$flipper_length_mm, breaks = 7)
+```
+
+### **boxplot()**
+The "boxplot()" function creates a box-and-whisker plot from a specified data set.
+
+> boxplot(x, ...)
+
+##### **Example**
+```{r tidy=TRUE}
+boxplot(ginkgo$petiole_length, xlab = "Petiole Length (mm)", main = "Histogram of Ginkgo-Leaf Petiole Length")
+```
+```{r}
+boxplot(ginkgo$petiole_length ~ ginkgo$seeds_present, xlab = "If Seeds Present on Plant", ylab = "Petiole Length (mm)", main = "Boxplot of Ginkgo-Leaf Petiole Length")
+```
+
+### **par()**
+"par()" is a function used to set graphical parameters. It is often used in conjunction with "mfrow =" and, optionally, "mar =" (margin dimensions c(x,y,z,a)) to display multiple plots in a common view.
+
+##### **mfrow =**
+"mfrow =" is a parameter of "par()" that designates the vertical and horizontal allowance for number of plots within a single view. It implements the "c()" function to set a two-dimensional grid, formatted as:
+
+> mfrow = c([horizontal dimensions],[vertical dimensions])
+
+##### **Example**
+```{r tidy=TRUE}
+par(mfrow = c(2, 2), mar = c(3, 3, 3, 3))
+
+boxplot(ginkgo$petiole_length, xlab = "Petiole Length (mm)", main = "Ginkgo-Leaf Petiole Length")
+
+boxplot(ginkgo$petiole_length ~ ginkgo$seeds_present, xlab = "If Seeds Present on Plant", ylab = "Petiole Length (mm)", main = "Ginkgo Petiole Length & Presence of Seeds")
+
+boxplot(ginkgo$max_width ~ ginkgo$max_depth, xlab = "Maximum Leaf Width", ylab = "Maximum Leaf Depth", main = "Gingko Leaf Max Width & Max Depth")
+
+boxplot(ginkgo$max_depth ~ ginkgo$petiole_length, xlab = "Maximum Leaf Depth", ylab = "Petiole Length", main = "Ginkgo Max Depth & Petriole Length")
+```
+
+   
+<a href="#header">back to top</a>
+:)
+               
 ## Distribution Functions
 
+### **dnorm()**
+The function "dnorm()" calculates the probability density of the normal distribution. It requires a random variable *x*, a population mean, and a population standard deviation. 
+
+> dnorm(x, mean = 0, sd = 1, log = FALSE)
+
+##### **Example**
+```{r tidy=TRUE}
+x_dnorm = seq(1, 19, length.out = 100)
+y_dnorm = dnorm(x_dnorm, mean = 10.4, sd = 2.4)
+y_dnorm
+```
+
+### **pnorm()**
+The "pnorm()" function calculates the cumulative density of a normal distribution. It requires a random variable *q*, mean, standard deviation value. It can also contain an argument designating whether the lower.tail is true or false.
+
+> pnorm(q, mean = 0, sd = 1, lower.tail = TRUE, log.p = FALSE)
+
+##### **Example**
+```{r tidy=TRUE}
+pnorm(75, mean = 33.2, sd = 2,lower.tail = FALSE)
+```
+
+### **qnorm()**
+The "qnorm()" function calculates the inverse of cumulative density on a normal distribution. It requires a random variable *q*, mean, standard deviation value. It can also contain an argument designating whether the lower.tail is true or false.
+
+> qnorm(p, mean = 0, sd = 1, lower.tail = TRUE, log.p = FALSE)
+
+
+##### **Example**
+```{r tidy=TRUE}
+qnorm(0.3, mean = 11, sd = 1,lower.tail = TRUE)
+```
+
+### **dbinom()**
+The function "dbinom()" calculates the probability density function of a binomial distribution. It requires a random variable *x*, size (number of trials), and a probability of success between each trial.It can also contain an argument designating whether the lower.tail is true or false.
+
+> dbinom(x, size, prob, log = FALSE)
+
+##### **Example**
+```{r tidy=TRUE}
+dbinom(x = 22, size = 60, prob = 0.5)
+```
+
+### **pbinom()**
+The "pbinom()" function performs a cumulative density analysis on a binomial distribution. It requires a random variable *q*, size (number of trials), and a probability of success between each trial.It can also contain an argument designating whether the lower.tail is true or false.
+
+> pbinom(q, size, prob, lower.tail = TRUE, log.p = FALSE)
+
+
+##### **Example**
+```{r tidy=TRUE}
+x_pbinom = seq(0, 20, length.out = 30)
+pbinom(x_pbinom, size = 40, prob = 0.8)
+```
+
+### **qbinom()**
+The "qbinom()" function performs an inverse of the cumulative density analysis on a binomial distribution. It requires a random variable *q*, size (number of trials), and a probability of success between each trial.It can also contain an argument designating whether the lower.tail is true or false.
+
+> qbinom(p, size, prob, lower.tail = TRUE, log.p = FALSE)
+
+##### **Example**
+```{r tidy=TRUE}
+x_qbinom = seq(0, 1, length.out = 25)
+qbinom(x_qbinom, size = 40, prob = 0.5)
+```
+
+<a href="#header">back to top</a>
+:)
